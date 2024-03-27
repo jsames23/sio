@@ -5,12 +5,13 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use App\Repository\TimeRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Doctrine\ORM\EntityManagerInterface;
+
+use App\Repository\TimeRepository;
 use App\Entity\Time;
 use App\Form\Type\TimeFormType;
 
+use Doctrine\ORM\EntityManagerInterface;
 
 class MainController extends AbstractController
 {
