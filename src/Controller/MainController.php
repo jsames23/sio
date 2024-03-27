@@ -15,13 +15,13 @@ use App\Form\Type\TimeFormType;
 class MainController extends AbstractController
 {
     #[Route('/')]
-    public function index(TimeRepository $timeRepository)
+    public function index(TimeRepository $timeRepository): Response
     {
         return $this->render('list.html.twig', ['times' => $timeRepository->findAll()]);
     }
 
     #[Route('/create')]
-    public function createTime(Request $request, EntityManagerInterface $entityManager)
+    public function createTime(Request $request, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(TimeFormType::class, new Time());
 
@@ -30,7 +30,7 @@ class MainController extends AbstractController
             $time = $form->getData();
             $entityManager->persist($time);
             $entityManager->flush();
-            $this->addFlash('success', 'Time Record was created!');
+            $this->addFlash('success', 'Time record was created!');
             return $this->redirectToRoute('app_main_index');
         }
 
@@ -40,7 +40,7 @@ class MainController extends AbstractController
     }
 
     #[Route('/edit/{id}')]
-    public function editTime(Request $request, EntityManagerInterface $entityManager, $id)
+    public function editTime(Request $request, EntityManagerInterface $entityManager, $id): Response
     {
 
         $time = $entityManager->getRepository(Time::class)->find($id);
@@ -50,10 +50,9 @@ class MainController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $time      = $form->getData();
-
             $entityManager->persist($time);
             $entityManager->flush();
-            $this->addFlash('success', 'Entry was edited!');
+            $this->addFlash('success', 'Time record was edited!');
             return $this->redirectToRoute('app_main_index');
         }
 
@@ -63,27 +62,26 @@ class MainController extends AbstractController
     }
 
     #[Route('/del/{id}')]
-    public function deleteTime(EntityManagerInterface $em, $id)
+    public function deleteTime(EntityManagerInterface $entityManager, $id): Response
     {
 
-        $time = $em->getRepository(Time::class)->find($id);
+        $time = $entityManager->getRepository(Time::class)->find($id);
 
-        $em->remove($time);
-        $em->flush();
+        $entityManager->remove($time);
+        $entityManager->flush();
         $this->addFlash('success', 'Time record was deleted!');
 
         return $this->redirectToRoute('app_main_index');
     }
 
     #[Route('/days')]
-    public function days(TimeRepository $timeRepository)
+    public function days(TimeRepository $timeRepository): Response
     {
         $days = $timeRepository->findAll();
         $hours = [];
 
         foreach($days as $day){
             $dateTitle = $day->getStartTime();
-            $countHours = 0;
 
             $timestampStart = strtotime($day->getStartTime()->format("d.m.Y H:i"));
             $timestampEnd = strtotime($day->getEndTime()->format("d.m.Y H:i"));
@@ -102,15 +100,12 @@ class MainController extends AbstractController
     }
 
     #[Route('/month')]
-    public function month(TimeRepository $timeRepository)
+    public function month(TimeRepository $timeRepository): Response
     {
         $days = $timeRepository->findAll();
-        $hours = [];
         $sumHours = [];
 
         foreach($days as $day){
-            $dateTitle = $day->getStartTime();
-            $countHours = 0;
 
             $timestampStart = strtotime($day->getStartTime()->format("d.m.Y H:i"));
             $timestampEnd = strtotime($day->getEndTime()->format("d.m.Y H:i"));
@@ -131,7 +126,7 @@ class MainController extends AbstractController
     }
 
     #[Route('/csv')]
-    public function csv(TimeRepository $timeRepository)
+    public function csv(TimeRepository $timeRepository): Response
     {
  
         $list = array();
@@ -140,7 +135,7 @@ class MainController extends AbstractController
 
             $start = $timeRepository->findAll()[$i]->getStartTime()->format('Y-m-d H:i');
             $end = $timeRepository->findAll()[$i]->getEndTime()->format('Y-m-d H:i');
-            $list[] = array(str_replace('"', "", $start),str_replace('"', "", $end));
+            $list[] = array($start, $end);
         }
 
         $fp = fopen('php://output','w', "w");
@@ -163,7 +158,6 @@ class MainController extends AbstractController
         $response->headers->set('Cache-Control', 'private');
         $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '";');
         $response->sendHeaders();
-        $response->setContent("");
         return $response;
 
     }
