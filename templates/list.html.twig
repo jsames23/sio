@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <style>
+        .align-center {
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-lg-8 align-center">
+            <h1>Time logs</h1>
+   
+    {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <table class="table table-striped ">
+                <thead class="thead-dark">
+
+                <tr>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Actions</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for time in times %}
+                    <tr>
+                        <td>{{ time.startTime|date('d.m.Y H:i') }}</td>
+                        <td>{{ time.endTime|date('d.m.Y H:i') }}</td>
+                        <td>
+    <a href="{{ path('app_main_edittime', {id: time.id}) }}" class="btn btn-primary">Edit</a>
+                        </td>
+                        <td>
+<a href="{{ path('app_main_deletetime', {id: time.id}) }}" onclick="return confirm('Are you sure?');" class="btn btn-danger">DELETE</a>                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8  align-center">
+            <a href="{{ path('app_main_createtime') }}" class="btn btn-primary">Create Time record</a>
+            <a href="{{ path('app_main_days') }}" class="btn btn-primary">Day statistics</a>
+            <a href="{{ path('app_main_month') }}" class="btn btn-primary">Month statistics</a>
+            <a href="{{ path('app_main_csv') }}" class="btn btn-primary">Download CSV</a>
+        </div>
+    </div>
+
+
+{% endblock %}

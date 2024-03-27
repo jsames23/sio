@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    <style>
+        .align-center {
+            margin: 0 auto;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="row">
+        <div class="col-lg-8 align-center">
+            <h1>Hours by day</h1>
+
+ {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="flash-{{ label }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            <table class="table table-striped ">
+                <thead class="thead-dark">
+
+                <tr>
+                    <th>Date</th>
+                    <th>Hours</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for day in days %}
+                    <tr>
+                        <td>{{ day.title|date('d.m.Y') }}</td>
+                        <td>{{ day.count }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+<div class="row">
+        <div class="col-lg-8  align-center">
+            <a href="{{ path('app_main_index') }}" class="btn btn-primary">Back to Overview</a>
+        </div>
+    </div>
+
+{% endblock %}
